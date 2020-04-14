@@ -27,6 +27,7 @@ var TodoInput = function (_React$Component) {
                 handleSubmit = _props.handleSubmit,
                 editItem = _props.editItem;
 
+
             return (
                 // INPUT
                 React.createElement(
@@ -94,35 +95,64 @@ var TodoList = function (_React$Component2) {
                 items = _props2.items,
                 clearList = _props2.clearList,
                 _handleDelete = _props2.handleDelete,
-                _handleEdit = _props2.handleEdit;
+                _handleEdit = _props2.handleEdit,
+                searchItem = _props2.searchItem;
+
+
+            var search = void 0;
+            var myRender = void 0;
+
+            // HANDLE SHOWING INFORMATION
+            if (!!searchItem && items.length === 0) {
+                search = 'No results';
+            } else {
+                search = '';
+            }
+
+            if (search.length === 0 && items.length === 0) {
+                myRender = "You're clear bro! :)";
+            } else {
+                myRender = '';
+            }
 
             return React.createElement(
-                'ul',
-                { className: 'list group my-5' },
+                'div',
+                { className: 'mr-5' },
                 React.createElement(
-                    'h3',
-                    { className: 'text-capitalize text-center' },
-                    'list'
-                ),
-                items.map(function (item) {
-                    return React.createElement(TodoItem, {
-                        key: item.id,
-                        title: item.title,
-                        handleDelete: function handleDelete() {
-                            return _handleDelete(item.id);
+                    'ul',
+                    { className: 'list group my-5' },
+                    React.createElement(
+                        'h3',
+                        { className: 'text-capitalize text-center' },
+                        'List'
+                    ),
+                    React.createElement('hr', null),
+                    React.createElement(
+                        'h4',
+                        { className: 'text-center' },
+                        search,
+                        myRender
+                    ),
+                    items.map(function (item) {
+                        return React.createElement(TodoItem, {
+                            key: item.id,
+                            title: item.title,
+                            handleDelete: function handleDelete() {
+                                return _handleDelete(item.id);
+                            },
+                            handleEdit: function handleEdit() {
+                                return _handleEdit(item.id);
+                            }
+                        });
+                    }),
+                    React.createElement(
+                        'button',
+                        { type: 'button',
+                            className: 'btn btn-danger btn-block mt-5',
+                            onClick: clearList
                         },
-                        handleEdit: function handleEdit() {
-                            return _handleEdit(item.id);
-                        }
-                    });
-                }),
-                React.createElement(
-                    'button',
-                    { type: 'button',
-                        className: 'btn btn-danger btn-block mt-5',
-                        onClick: clearList
-                    },
-                    'Clear list'
+                        'Clear list'
+                    )
                 )
             );
         }
@@ -153,28 +183,39 @@ var TodoItem = function (_React$Component3) {
 
             return React.createElement(
                 'li',
-                { className: 'list-group-item text-capitalize \r d-flex justify-content-between my-2' },
-                React.createElement(
-                    'h6',
-                    null,
-                    title
-                ),
+                { className: 'list-group-item text-capitalize \r my-2' },
                 React.createElement(
                     'div',
-                    { className: 'todo-icon' },
+                    { className: 'd-flex' },
                     React.createElement(
-                        'span',
-                        { className: 'mx-2 text-success',
-                            onClick: handleEdit
-                        },
-                        React.createElement('i', { className: 'fas fa-pen' })
+                        'div',
+                        { className: 'text-wrap', style: { width: '90%' } },
+                        React.createElement(
+                            'span',
+                            null,
+                            title
+                        )
                     ),
                     React.createElement(
-                        'span',
-                        { className: 'mx-2 text-danger',
-                            onClick: handleDelete
+                        'div',
+                        {
+                            className: 'todo-icon d-lg-flex',
+                            style: { width: '10%' }
                         },
-                        React.createElement('i', { className: 'fas fa-trash' })
+                        React.createElement(
+                            'span',
+                            { className: 'text-success mx-2',
+                                onClick: handleEdit
+                            },
+                            React.createElement('i', { className: 'fas fa-pen' })
+                        ),
+                        React.createElement(
+                            'span',
+                            { className: 'text-danger mx-2',
+                                onClick: handleDelete
+                            },
+                            React.createElement('i', { className: 'fas fa-trash' })
+                        )
                     )
                 )
             );
@@ -201,7 +242,8 @@ var TodoSearch = function (_React$Component4) {
         value: function render() {
             var _props4 = this.props,
                 searchItem = _props4.searchItem,
-                handleSearch = _props4.handleSearch;
+                handleSearch = _props4.handleSearch,
+                deleteSearch = _props4.deleteSearch;
 
 
             return (
@@ -229,7 +271,10 @@ var TodoSearch = function (_React$Component4) {
                         { className: 'input-group-prepend' },
                         React.createElement(
                             'div',
-                            { className: 'input-group-text bg-white text-danger' },
+                            {
+                                className: 'input-group-text bg-white text-danger',
+                                onClick: deleteSearch
+                            },
                             React.createElement('i', { className: 'fas fa-times' })
                         )
                     )
@@ -262,6 +307,12 @@ var App = function (_React$Component5) {
             // console.log(e.target.value)
             _this5.setState({
                 searchItem: e.target.value
+            });
+        };
+
+        _this5.deleteSearch = function () {
+            _this5.setState({
+                searchItem: ''
             });
         };
 
@@ -349,6 +400,7 @@ var App = function (_React$Component5) {
             var filteredSearch = this.state.items.filter(function (item) {
                 return item.title.toLowerCase().indexOf(_this6.state.searchItem.toLowerCase()) !== -1;
             });
+
             return React.createElement(
                 'div',
                 { className: 'container' },
@@ -360,7 +412,9 @@ var App = function (_React$Component5) {
                         { className: 'col-10 mx-auto col-md-8 mt-4' },
                         React.createElement(TodoSearch, {
                             searchItem: this.state.searchItem,
-                            handleSearch: this.handleSearch }),
+                            handleSearch: this.handleSearch,
+                            deleteSearch: this.deleteSearch
+                        }),
                         React.createElement(TodoInput, {
                             item: this.state.item,
                             handleChange: this.handleChange,
@@ -371,7 +425,8 @@ var App = function (_React$Component5) {
                             items: filteredSearch,
                             clearList: this.clearList,
                             handleDelete: this.handleDelete,
-                            handleEdit: this.handleEdit
+                            handleEdit: this.handleEdit,
+                            searchItem: this.state.searchItem
                         })
                     )
                 )

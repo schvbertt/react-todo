@@ -6,6 +6,7 @@ class TodoInput extends React.Component {
             handleChange,
             handleSubmit,
             editItem} = this.props;
+
         return (
             // INPUT
             <div className='card card-body my-3'>
@@ -48,12 +49,37 @@ class TodoList extends React.Component {
             items,
             clearList,
             handleDelete,
-            handleEdit} = this.props;
+            handleEdit,
+            searchItem} = this.props;
+
+            let search;
+            let myRender;
+
+            // HANDLE SHOWING INFORMATION
+            if (!!searchItem && items.length === 0) {
+                search = 'No results'
+            } else {
+                search = ''
+            }
+
+            if (search.length === 0 && items.length === 0) {
+                myRender = "You're clear bro! :)"
+            } else {
+                myRender = ''
+            }
+
+        
         return (
+            <div className='mr-5'>
             <ul className="list group my-5">
                 <h3 className='text-capitalize text-center'>
-                    list
+                    List
                 </h3>
+                <hr />
+                <h4 className='text-center'>
+                    {search}
+                    {myRender}
+                </h4>
                 {items.map(item => {
                     return (
                         <TodoItem
@@ -71,6 +97,7 @@ class TodoList extends React.Component {
                     Clear list
                 </button>
             </ul>
+            </div>
         )
     }
 }
@@ -86,19 +113,26 @@ class TodoItem extends React.Component {
             handleEdit} = this.props;
         return (
             <li className="list-group-item text-capitalize 
-            d-flex justify-content-between my-2">
-                <h6>{title}</h6>
-                <div className='todo-icon'>
-                    <span className="mx-2 text-success"
+             my-2">
+                <div className='d-flex'>
+                <div className='text-wrap' style={{width: '90%'}}>
+                    <span>{title}</span>
+                </div>
+                <div 
+                className='todo-icon d-lg-flex'
+                style={{width: '10%'}}
+                >
+                    <span className="text-success mx-2"
                     onClick={handleEdit}
                     >
                         <i className="fas fa-pen"></i>
                     </span>
-                    <span className="mx-2 text-danger"
+                    <span className="text-danger mx-2"
                     onClick={handleDelete}
                     >
                         <i className="fas fa-trash"></i>
                     </span>
+                </div>
                 </div>
             </li>
         )
@@ -110,7 +144,8 @@ class TodoSearch extends React.Component {
     render() {
         const {
             searchItem,
-            handleSearch} = this.props;
+            handleSearch,
+            deleteSearch} = this.props;
 
         
         return (
@@ -128,7 +163,10 @@ class TodoSearch extends React.Component {
             onChange={handleSearch}
             />
             <div className='input-group-prepend'>
-                <div className='input-group-text bg-white text-danger'>
+                <div
+                className='input-group-text bg-white text-danger'
+                onClick={deleteSearch}
+                >
                     <i className='fas fa-times'></i>
                 </div>
             </div>
@@ -163,6 +201,12 @@ class App extends React.Component {
         // console.log(e.target.value)
         this.setState({
             searchItem: e.target.value
+        })
+    }
+
+    deleteSearch = () => {
+        this.setState({
+            searchItem: ''
         })
     }
 
@@ -228,6 +272,7 @@ class App extends React.Component {
                     this.state.searchItem.toLowerCase()) !== -1;
                 }
             )
+
         return (
             <div className="container">
                 <div className="row">
@@ -235,7 +280,9 @@ class App extends React.Component {
                         
                         <TodoSearch 
                         searchItem={this.state.searchItem}
-                        handleSearch={this.handleSearch}/>
+                        handleSearch={this.handleSearch}
+                        deleteSearch={this.deleteSearch}
+                        />
                         <TodoInput
                         item={this.state.item}
                         handleChange={this.handleChange}
@@ -247,6 +294,7 @@ class App extends React.Component {
                         clearList={this.clearList}
                         handleDelete={this.handleDelete}
                         handleEdit={this.handleEdit}
+                        searchItem={this.state.searchItem}
                         />
                     </div>
                 </div>
