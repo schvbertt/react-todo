@@ -203,6 +203,7 @@ var TodoSearch = function (_React$Component4) {
                 searchItem = _props4.searchItem,
                 handleSearch = _props4.handleSearch;
 
+
             return (
                 // SEARCH
                 React.createElement(
@@ -222,7 +223,16 @@ var TodoSearch = function (_React$Component4) {
                         placeholder: 'search it',
                         value: searchItem,
                         onChange: handleSearch
-                    })
+                    }),
+                    React.createElement(
+                        'div',
+                        { className: 'input-group-prepend' },
+                        React.createElement(
+                            'div',
+                            { className: 'input-group-text bg-white text-danger' },
+                            React.createElement('i', { className: 'fas fa-times' })
+                        )
+                    )
                 )
             );
         }
@@ -249,7 +259,7 @@ var App = function (_React$Component5) {
         };
 
         _this5.handleSearch = function (e) {
-
+            // console.log(e.target.value)
             _this5.setState({
                 searchItem: e.target.value
             });
@@ -334,6 +344,11 @@ var App = function (_React$Component5) {
     }, {
         key: 'render',
         value: function render() {
+            var _this6 = this;
+
+            var filteredSearch = this.state.items.filter(function (item) {
+                return item.title.toLowerCase().indexOf(_this6.state.searchItem.toLowerCase()) !== -1;
+            });
             return React.createElement(
                 'div',
                 { className: 'container' },
@@ -353,7 +368,7 @@ var App = function (_React$Component5) {
                             editItem: this.state.editItem
                         }),
                         React.createElement(TodoList, {
-                            items: this.state.items,
+                            items: filteredSearch,
                             clearList: this.clearList,
                             handleDelete: this.handleDelete,
                             handleEdit: this.handleEdit

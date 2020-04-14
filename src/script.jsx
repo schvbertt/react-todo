@@ -111,6 +111,8 @@ class TodoSearch extends React.Component {
         const {
             searchItem,
             handleSearch} = this.props;
+
+        
         return (
             // SEARCH
             <div className='input-group'>
@@ -125,6 +127,11 @@ class TodoSearch extends React.Component {
             value={searchItem}
             onChange={handleSearch}
             />
+            <div className='input-group-prepend'>
+                <div className='input-group-text bg-white text-danger'>
+                    <i className='fas fa-times'></i>
+                </div>
+            </div>
         </div>
         )
     }
@@ -153,7 +160,7 @@ class App extends React.Component {
     }
 // SEARCH HANDLER
     handleSearch = e => {
-        
+        // console.log(e.target.value)
         this.setState({
             searchItem: e.target.value
         })
@@ -214,6 +221,13 @@ class App extends React.Component {
     }
 
     render() {
+
+        const filteredSearch = this.state.items.filter(
+            item => {
+                return item.title.toLowerCase().indexOf(
+                    this.state.searchItem.toLowerCase()) !== -1;
+                }
+            )
         return (
             <div className="container">
                 <div className="row">
@@ -229,7 +243,7 @@ class App extends React.Component {
                         editItem={this.state.editItem}
                         />
                         <TodoList
-                        items={this.state.items}
+                        items={filteredSearch}
                         clearList={this.clearList}
                         handleDelete={this.handleDelete}
                         handleEdit={this.handleEdit}
