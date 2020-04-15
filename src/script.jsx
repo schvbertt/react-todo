@@ -34,6 +34,7 @@ class TodoInput extends React.Component {
                         <div className='input-group-prepend'>
                             <div
                             className='input-group-text bg-white text-danger'
+                            style={{cursor: 'pointer'}}
                             onClick={deleteInput}
                             >
                                 <i className='fas fa-times'></i>
@@ -148,12 +149,16 @@ class TodoItem extends React.Component {
                     <div 
                 className='todo-icon d-flex'
                 >
-                    <span className="text-success mx-2"
+                    <span
+                    className="text-success mx-2"
+                    style={{cursor: 'pointer'}}
                     onClick={handleEdit}
                     >
                         <i className="fas fa-pen"></i>
                     </span>
-                    <span className="text-danger mx-2"
+                    <span 
+                    className="text-danger mx-2"
+                    style={{cursor: 'pointer'}}
                     onClick={handleDelete}
                     >
                         <i className="fas fa-trash"></i>
@@ -184,7 +189,8 @@ class TodoSearch extends React.Component {
             // SEARCH ICON
             <div className='input-group'>
                 <div className='input-group-prepend'>
-                    <div className='input-group-text bg-primary text-white'>
+                    <div
+                    className='input-group-text bg-primary text-white'>
                         <i className='fas fa-search'></i>
                     </div>
                 </div>
@@ -199,6 +205,7 @@ class TodoSearch extends React.Component {
             <div className='input-group-prepend'>
                 <div
                 className='input-group-text bg-white text-danger'
+                style={{cursor: 'pointer'}}
                 onClick={deleteSearch}
                 >
                     <i className='fas fa-times'></i>

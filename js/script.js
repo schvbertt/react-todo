@@ -67,6 +67,7 @@ var TodoInput = function (_React$Component) {
                                     'div',
                                     {
                                         className: 'input-group-text bg-white text-danger',
+                                        style: { cursor: 'pointer' },
                                         onClick: deleteInput
                                     },
                                     React.createElement('i', { className: 'fas fa-times' })
@@ -220,14 +221,18 @@ var TodoItem = function (_React$Component3) {
                         },
                         React.createElement(
                             'span',
-                            { className: 'text-success mx-2',
+                            {
+                                className: 'text-success mx-2',
+                                style: { cursor: 'pointer' },
                                 onClick: handleEdit
                             },
                             React.createElement('i', { className: 'fas fa-pen' })
                         ),
                         React.createElement(
                             'span',
-                            { className: 'text-danger mx-2',
+                            {
+                                className: 'text-danger mx-2',
+                                style: { cursor: 'pointer' },
                                 onClick: handleDelete
                             },
                             React.createElement('i', { className: 'fas fa-trash' })
@@ -282,7 +287,8 @@ var TodoSearch = function (_React$Component4) {
                         { className: 'input-group-prepend' },
                         React.createElement(
                             'div',
-                            { className: 'input-group-text bg-primary text-white' },
+                            {
+                                className: 'input-group-text bg-primary text-white' },
                             React.createElement('i', { className: 'fas fa-search' })
                         )
                     ),
@@ -299,6 +305,7 @@ var TodoSearch = function (_React$Component4) {
                             'div',
                             {
                                 className: 'input-group-text bg-white text-danger',
+                                style: { cursor: 'pointer' },
                                 onClick: deleteSearch
                             },
                             React.createElement('i', { className: 'fas fa-times' })
