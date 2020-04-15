@@ -443,6 +443,9 @@ var App = function (_React$Component5) {
                 return item.id === id;
             });
 
+            // SCROLL TO TOP FOR EACH EDIT
+            window.scrollTo(0, 0);
+
             if (_this5.state.editItem) {
                 _this5.setState({
                     editError: 'ITEM IS BEING EDITED ALREDY'

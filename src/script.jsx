@@ -343,6 +343,9 @@ class App extends React.Component {
             item.id !== id)
 
         const selectedItem = this.state.items.find(item => item.id === id)
+
+        // SCROLL TO TOP FOR EACH EDIT
+        window.scrollTo(0, 0);
         
         if (this.state.editItem) {
             this.setState({
