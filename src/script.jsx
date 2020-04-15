@@ -5,7 +5,8 @@ class TodoInput extends React.Component {
             item, 
             handleChange,
             handleSubmit,
-            editItem} = this.props;
+            editItem,
+            deleteInput} = this.props;
 
             
         return (
@@ -15,18 +16,29 @@ class TodoInput extends React.Component {
                     input
                 </h3>
                 <form onSubmit={handleSubmit}>
+                    {/* INPUT ICON */}
                     <div className='input-group mt-2'>
                         <div className='input-group-prepend'>
                             <div className='input-group-text bg-primary text-white'>
                                 <i className='fas fa-book'></i>
                             </div>
                         </div>
+                        {/* INPUT INPUT */}
                         <input type='text'
                         className='form-control'
                         placeholder='add a todo item'
                         value={item}
                         onChange={handleChange}
                         />
+                        {/* INPUT DELETE ICON */}
+                        <div className='input-group-prepend'>
+                            <div
+                            className='input-group-text bg-white text-danger'
+                            onClick={deleteInput}
+                            >
+                                <i className='fas fa-times'></i>
+                            </div>
+                        </div>
                     </div>
                     <button type='submit'
                     className={editItem
@@ -169,19 +181,21 @@ class TodoSearch extends React.Component {
 
         
         return (
-            // SEARCH
+            // SEARCH ICON
             <div className='input-group'>
-            <div className='input-group-prepend'>
-                <div className='input-group-text bg-primary text-white'>
-                    <i className='fas fa-search'></i>
+                <div className='input-group-prepend'>
+                    <div className='input-group-text bg-primary text-white'>
+                        <i className='fas fa-search'></i>
+                    </div>
                 </div>
-            </div>
+            {/* SEARCH INPUT */}
             <input type='text'
             className='form-control'
             placeholder='search it'
             value={searchItem}
             onChange={handleSearch}
             />
+            {/* SEARCH DELETE ICON */}
             <div className='input-group-prepend'>
                 <div
                 className='input-group-text bg-white text-danger'
@@ -218,15 +232,20 @@ class App extends React.Component {
     }
 // SEARCH HANDLER
     handleSearch = e => {
-        // console.log(e.target.value)
         this.setState({
             searchItem: e.target.value
         })
     }
-
+// DELETE SEARCH INPUT
     deleteSearch = () => {
         this.setState({
             searchItem: ''
+        })
+    }
+// DELETE INPUT INPUT
+    deleteInput = () => {
+        this.setState({
+            item: ''
         })
     }
 
@@ -258,7 +277,7 @@ class App extends React.Component {
 
     clearList = () => {
         this.setState({
-            items:[]
+            items: ''
         })
     }
 
@@ -285,6 +304,7 @@ class App extends React.Component {
             id: id
         })
     }
+
     render() {
 
         const filteredSearch = this.state.items.filter(
@@ -310,6 +330,7 @@ class App extends React.Component {
                         handleChange={this.handleChange}
                         handleSubmit={this.handleSubmit}
                         editItem={this.state.editItem}
+                        deleteInput={this.deleteInput}
                         />
                         <TodoList
                         items={filteredSearch}

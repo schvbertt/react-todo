@@ -25,7 +25,8 @@ var TodoInput = function (_React$Component) {
                 item = _props.item,
                 handleChange = _props.handleChange,
                 handleSubmit = _props.handleSubmit,
-                editItem = _props.editItem;
+                editItem = _props.editItem,
+                deleteInput = _props.deleteInput;
 
 
             return (
@@ -58,7 +59,19 @@ var TodoInput = function (_React$Component) {
                                 placeholder: 'add a todo item',
                                 value: item,
                                 onChange: handleChange
-                            })
+                            }),
+                            React.createElement(
+                                'div',
+                                { className: 'input-group-prepend' },
+                                React.createElement(
+                                    'div',
+                                    {
+                                        className: 'input-group-text bg-white text-danger',
+                                        onClick: deleteInput
+                                    },
+                                    React.createElement('i', { className: 'fas fa-times' })
+                                )
+                            )
                         ),
                         React.createElement(
                             'button',
@@ -260,7 +273,7 @@ var TodoSearch = function (_React$Component4) {
 
 
             return (
-                // SEARCH
+                // SEARCH ICON
                 React.createElement(
                     'div',
                     { className: 'input-group' },
@@ -317,7 +330,6 @@ var App = function (_React$Component5) {
         };
 
         _this5.handleSearch = function (e) {
-            // console.log(e.target.value)
             _this5.setState({
                 searchItem: e.target.value
             });
@@ -326,6 +338,12 @@ var App = function (_React$Component5) {
         _this5.deleteSearch = function () {
             _this5.setState({
                 searchItem: ''
+            });
+        };
+
+        _this5.deleteInput = function () {
+            _this5.setState({
+                item: ''
             });
         };
 
@@ -355,7 +373,7 @@ var App = function (_React$Component5) {
 
         _this5.clearList = function () {
             _this5.setState({
-                items: []
+                items: ''
             });
         };
 
@@ -406,6 +424,10 @@ var App = function (_React$Component5) {
 
         // SEARCH HANDLER
 
+        // DELETE SEARCH INPUT
+
+        // DELETE INPUT INPUT
+
     }, {
         key: 'render',
         value: function render() {
@@ -433,7 +455,8 @@ var App = function (_React$Component5) {
                             item: this.state.item,
                             handleChange: this.handleChange,
                             handleSubmit: this.handleSubmit,
-                            editItem: this.state.editItem
+                            editItem: this.state.editItem,
+                            deleteInput: this.deleteInput
                         }),
                         React.createElement(TodoList, {
                             items: filteredSearch,
