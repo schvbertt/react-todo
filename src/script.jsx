@@ -113,6 +113,8 @@ class TodoList extends React.Component {
                         <TodoItem
                         key={item.id}
                         title={item.title}
+                        date={item.date}
+                        isEdited={item.isEdited}
                         handleDelete={() => handleDelete(item.id)}
                         handleEdit={() => handleEdit(item.id)}
                         />
@@ -134,56 +136,51 @@ class TodoList extends React.Component {
 
 // ------------------------TO DO ITEM
 class TodoItem extends React.Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-            date: new Date().toLocaleString()
-        }
-    }
-
     render() {
         const {
             title,
             handleDelete,
-            handleEdit} = this.props;
+            handleEdit,
+            date,
+            isEdited} = this.props;
 
-            
         return (
-            <li className="list-group-item text-capitalize 
-             my-2">
+            <li className="list-group-item my-2">
                 <div
                 className='d-flex justify-content-between'
                 >
                     {/* DATE */}
-                    <div>
-                        {this.state.date}
+                    <div className='d-flex'>
+                        <div>
+                            {date}
+                        </div>
+                        <div className='ml-2'>
+                            <small>{isEdited ? '| edited' : ''}</small>
+                        </div>
                     </div>
                     {/* ICONS */}
                     <div 
-                className='todo-icon d-flex'
-                >   <span>
-                        {/* {isEdited} */}
-                    </span>
-                    <span
-                    className="text-success mx-2"
-                    style={{cursor: 'pointer'}}
-                    onClick={handleEdit}
-                    >
-                        <i className="fas fa-pen"></i>
-                    </span>
-                    <span 
-                    className="text-danger mx-2"
-                    style={{cursor: 'pointer'}}
-                    onClick={handleDelete}
-                    >
-                        <i className="fas fa-trash"></i>
-                    </span>
-                </div>
+                    className='todo-icon d-flex'>
+                        <span
+                        className="text-success mx-2"
+                        style={{cursor: 'pointer'}}
+                        onClick={handleEdit}
+                        >
+                            <i className="fas fa-pen"></i>
+                        </span>
+                        <span 
+                        className="text-danger mx-2"
+                        style={{cursor: 'pointer'}}
+                        onClick={handleDelete}
+                        >
+                            <i className="fas fa-trash"></i>
+                        </span>
+                    </div>
                 </div>
                 
                 <hr />
                 
-                <div className='text-wrap'>
+                <div className='text-wrap text-capitalize'>
                     <span>{title}</span>
                 </div>
             </li>
@@ -242,12 +239,18 @@ class App extends React.Component {
             searchItem: '',
             editItem: false,
             inputError: '',
-            editError: ''
+            editError: '',
+            date: this.date(),
+            isEdited: false
         }
     }
 // UNIQUE ID GENERATOR
     uuid() {
         return 1 + Math.random();
+    }
+// NEW DATE GENERATOR
+    date() {
+        return new Date().toLocaleString();
     }
 // INPUT HANDLER
     handleChange = e => {
@@ -270,7 +273,9 @@ class App extends React.Component {
 // DELETE INPUT INPUT
     deleteInput = () => {
         this.setState({
-            item: ''
+            item: '',
+            editItem: false,
+            isEdited: false
         })
     }
 // SUBMIT FORM
@@ -280,7 +285,7 @@ class App extends React.Component {
             // CHECK IF INPUT IS CLEAR
                 if (this.state.item === '') {
                     this.setState({
-                        inputError: 'INPUT CANNOT BE CLEAR'
+                        inputError: "INPUT CAN'T BE CLEAR"
                     })
                     setTimeout(
                         () => {
@@ -296,7 +301,9 @@ class App extends React.Component {
 
         const newItem = {
             id: this.state.id,
-            title: this.state.item
+            title: this.state.item,
+            date: this.state.date,
+            isEdited: this.state.isEdited
         };
         // console.log(newItem);
         // console.log(this.state.editItem);
@@ -308,7 +315,9 @@ class App extends React.Component {
             items: updatedItems,
             item: '',
             id: this.uuid(),
-            editItem: false
+            editItem: false,
+            date: this.date(),
+            isEdited: false
         })
 
     }
@@ -337,7 +346,7 @@ class App extends React.Component {
         
         if (this.state.editItem) {
             this.setState({
-                editError: 'ITEM IS BEING EDITED ALREDY'
+                editError: 'ITEM IS BEING EDITED ALREDY',
             })
             setTimeout(
                 () => {
@@ -354,7 +363,8 @@ class App extends React.Component {
             items: filteredItems,
             item: selectedItem.title,
             editItem: true,
-            id: id
+            id: id,
+            isEdited: true
         })
 
     }

@@ -164,6 +164,8 @@ var TodoList = function (_React$Component2) {
                         return React.createElement(TodoItem, {
                             key: item.id,
                             title: item.title,
+                            date: item.date,
+                            isEdited: item.isEdited,
                             handleDelete: function handleDelete() {
                                 return _handleDelete(item.id);
                             },
@@ -194,15 +196,10 @@ var TodoList = function (_React$Component2) {
 var TodoItem = function (_React$Component3) {
     _inherits(TodoItem, _React$Component3);
 
-    function TodoItem(props) {
+    function TodoItem() {
         _classCallCheck(this, TodoItem);
 
-        var _this3 = _possibleConstructorReturn(this, (TodoItem.__proto__ || Object.getPrototypeOf(TodoItem)).call(this, props));
-
-        _this3.state = {
-            date: new Date().toLocaleString()
-        };
-        return _this3;
+        return _possibleConstructorReturn(this, (TodoItem.__proto__ || Object.getPrototypeOf(TodoItem)).apply(this, arguments));
     }
 
     _createClass(TodoItem, [{
@@ -211,12 +208,14 @@ var TodoItem = function (_React$Component3) {
             var _props3 = this.props,
                 title = _props3.title,
                 handleDelete = _props3.handleDelete,
-                handleEdit = _props3.handleEdit;
+                handleEdit = _props3.handleEdit,
+                date = _props3.date,
+                isEdited = _props3.isEdited;
 
 
             return React.createElement(
                 'li',
-                { className: 'list-group-item text-capitalize \r my-2' },
+                { className: 'list-group-item my-2' },
                 React.createElement(
                     'div',
                     {
@@ -224,16 +223,26 @@ var TodoItem = function (_React$Component3) {
                     },
                     React.createElement(
                         'div',
-                        null,
-                        this.state.date
+                        { className: 'd-flex' },
+                        React.createElement(
+                            'div',
+                            null,
+                            date
+                        ),
+                        React.createElement(
+                            'div',
+                            { className: 'ml-2' },
+                            React.createElement(
+                                'small',
+                                null,
+                                isEdited ? '| edited' : ''
+                            )
+                        )
                     ),
                     React.createElement(
                         'div',
                         {
-                            className: 'todo-icon d-flex'
-                        },
-                        '   ',
-                        React.createElement('span', null),
+                            className: 'todo-icon d-flex' },
                         React.createElement(
                             'span',
                             {
@@ -257,7 +266,7 @@ var TodoItem = function (_React$Component3) {
                 React.createElement('hr', null),
                 React.createElement(
                     'div',
-                    { className: 'text-wrap' },
+                    { className: 'text-wrap text-capitalize' },
                     React.createElement(
                         'span',
                         null,
@@ -365,7 +374,9 @@ var App = function (_React$Component5) {
 
         _this5.deleteInput = function () {
             _this5.setState({
-                item: ''
+                item: '',
+                editItem: false,
+                isEdited: false
             });
         };
 
@@ -375,7 +386,7 @@ var App = function (_React$Component5) {
             // CHECK IF INPUT IS CLEAR
             if (_this5.state.item === '') {
                 _this5.setState({
-                    inputError: 'INPUT CANNOT BE CLEAR'
+                    inputError: "INPUT CAN'T BE CLEAR"
                 });
                 setTimeout(function () {
                     _this5.setState({
@@ -387,7 +398,9 @@ var App = function (_React$Component5) {
 
             var newItem = {
                 id: _this5.state.id,
-                title: _this5.state.item
+                title: _this5.state.item,
+                date: _this5.state.date,
+                isEdited: _this5.state.isEdited
             };
             // console.log(newItem);
             // console.log(this.state.editItem);
@@ -399,7 +412,9 @@ var App = function (_React$Component5) {
                 items: updatedItems,
                 item: '',
                 id: _this5.uuid(),
-                editItem: false
+                editItem: false,
+                date: _this5.date(),
+                isEdited: false
             });
         };
 
@@ -444,7 +459,8 @@ var App = function (_React$Component5) {
                 items: filteredItems,
                 item: selectedItem.title,
                 editItem: true,
-                id: id
+                id: id,
+                isEdited: true
             });
         };
 
@@ -455,7 +471,9 @@ var App = function (_React$Component5) {
             searchItem: '',
             editItem: false,
             inputError: '',
-            editError: ''
+            editError: '',
+            date: _this5.date(),
+            isEdited: false
         };
         return _this5;
     }
@@ -466,6 +484,13 @@ var App = function (_React$Component5) {
         key: 'uuid',
         value: function uuid() {
             return 1 + Math.random();
+        }
+        // NEW DATE GENERATOR
+
+    }, {
+        key: 'date',
+        value: function date() {
+            return new Date().toLocaleString();
         }
         // INPUT HANDLER
 
