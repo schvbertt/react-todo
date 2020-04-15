@@ -167,10 +167,15 @@ var TodoList = function (_React$Component2) {
 var TodoItem = function (_React$Component3) {
     _inherits(TodoItem, _React$Component3);
 
-    function TodoItem() {
+    function TodoItem(props) {
         _classCallCheck(this, TodoItem);
 
-        return _possibleConstructorReturn(this, (TodoItem.__proto__ || Object.getPrototypeOf(TodoItem)).apply(this, arguments));
+        var _this3 = _possibleConstructorReturn(this, (TodoItem.__proto__ || Object.getPrototypeOf(TodoItem)).call(this, props));
+
+        _this3.state = {
+            date: new Date().toLocaleString()
+        };
+        return _this3;
     }
 
     _createClass(TodoItem, [{
@@ -181,26 +186,24 @@ var TodoItem = function (_React$Component3) {
                 handleDelete = _props3.handleDelete,
                 handleEdit = _props3.handleEdit;
 
+
             return React.createElement(
                 'li',
                 { className: 'list-group-item text-capitalize \r my-2' },
                 React.createElement(
                     'div',
-                    { className: 'd-flex' },
+                    {
+                        className: 'd-flex justify-content-between'
+                    },
                     React.createElement(
                         'div',
-                        { className: 'text-wrap', style: { width: '90%' } },
-                        React.createElement(
-                            'span',
-                            null,
-                            title
-                        )
+                        null,
+                        this.state.date
                     ),
                     React.createElement(
                         'div',
                         {
-                            className: 'todo-icon d-lg-flex',
-                            style: { width: '10%' }
+                            className: 'todo-icon d-flex'
                         },
                         React.createElement(
                             'span',
@@ -216,6 +219,16 @@ var TodoItem = function (_React$Component3) {
                             },
                             React.createElement('i', { className: 'fas fa-trash' })
                         )
+                    )
+                ),
+                React.createElement('hr', null),
+                React.createElement(
+                    'div',
+                    { className: 'text-wrap' },
+                    React.createElement(
+                        'span',
+                        null,
+                        title
                     )
                 )
             );
@@ -329,6 +342,7 @@ var App = function (_React$Component5) {
                 title: _this5.state.item
             };
             // console.log(newItem);
+            // console.log(this.state.editItem);
             var updatedItems = [].concat(_toConsumableArray(_this5.state.items), [newItem]);
 
             _this5.setState({

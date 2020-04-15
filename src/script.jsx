@@ -7,6 +7,7 @@ class TodoInput extends React.Component {
             handleSubmit,
             editItem} = this.props;
 
+            
         return (
             // INPUT
             <div className='card card-body my-3'>
@@ -32,7 +33,9 @@ class TodoInput extends React.Component {
                         ? 'btn btn-block btn-success mt-3'
                         : 'btn btn-block btn-primary mt-3'}
                     >
-                    {editItem ? 'Apply' : 'Add item'}
+                    {editItem
+                    ? 'Apply'
+                    : 'Add item'}
                     </button>
                 </form> 
             </div>
@@ -72,9 +75,9 @@ class TodoList extends React.Component {
         return (
             <div className='mr-5'>
             <ul className="list group my-5">
-                <h3 className='text-capitalize text-center'>
-                    List
-                </h3>
+                    <h3 className='text-capitalize text-center'>
+                        List
+                    </h3>
                 <hr />
                 <h4 className='text-center'>
                     {search}
@@ -106,21 +109,32 @@ class TodoList extends React.Component {
 
 // ------------------------TO DO ITEM
 class TodoItem extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            date: new Date().toLocaleString()
+        }
+    }
+
     render() {
         const {
             title,
             handleDelete,
             handleEdit} = this.props;
+
         return (
             <li className="list-group-item text-capitalize 
              my-2">
-                <div className='d-flex'>
-                <div className='text-wrap' style={{width: '90%'}}>
-                    <span>{title}</span>
-                </div>
-                <div 
-                className='todo-icon d-lg-flex'
-                style={{width: '10%'}}
+                <div
+                className='d-flex justify-content-between'
+                >
+                    {/* DATE */}
+                    <div>
+                        {this.state.date}
+                    </div>
+                    {/* ICONS */}
+                    <div 
+                className='todo-icon d-flex'
                 >
                     <span className="text-success mx-2"
                     onClick={handleEdit}
@@ -133,6 +147,12 @@ class TodoItem extends React.Component {
                         <i className="fas fa-trash"></i>
                     </span>
                 </div>
+                </div>
+                
+                <hr />
+                
+                <div className='text-wrap'>
+                    <span>{title}</span>
                 </div>
             </li>
         )
@@ -218,18 +238,20 @@ class App extends React.Component {
             return;
         }
 
+
         const newItem = {
             id: this.state.id,
             title: this.state.item
         };
         // console.log(newItem);
+        // console.log(this.state.editItem);
         const updatedItems = [...this.state.items, newItem];
 
         this.setState({
             items: updatedItems,
             item: '',
             id: this.uuid(),
-            editItem: false
+            editItem: false,
         })
 
     }
@@ -263,7 +285,6 @@ class App extends React.Component {
             id: id
         })
     }
-
     render() {
 
         const filteredSearch = this.state.items.filter(
@@ -273,6 +294,7 @@ class App extends React.Component {
                 }
             )
 
+        
         return (
             <div className="container">
                 <div className="row">
