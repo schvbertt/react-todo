@@ -26,7 +26,9 @@ var TodoInput = function (_React$Component) {
                 handleChange = _props.handleChange,
                 handleSubmit = _props.handleSubmit,
                 editItem = _props.editItem,
-                deleteInput = _props.deleteInput;
+                deleteInput = _props.deleteInput,
+                inputError = _props.inputError,
+                editError = _props.editError;
 
 
             return (
@@ -34,11 +36,6 @@ var TodoInput = function (_React$Component) {
                 React.createElement(
                     'div',
                     { className: 'card card-body my-3' },
-                    React.createElement(
-                        'h3',
-                        { className: 'text-capitalize text-center' },
-                        'input'
-                    ),
                     React.createElement(
                         'form',
                         { onSubmit: handleSubmit },
@@ -71,6 +68,22 @@ var TodoInput = function (_React$Component) {
                                         onClick: deleteInput
                                     },
                                     React.createElement('i', { className: 'fas fa-times' })
+                                )
+                            )
+                        ),
+                        React.createElement(
+                            'div',
+                            {
+                                className: 'container d-flex',
+                                style: { height: '13px' } },
+                            React.createElement(
+                                'div',
+                                { className: 'ml-auto mt-1' },
+                                React.createElement(
+                                    'span',
+                                    { className: 'badge badge-pill badge-warning d-flex' },
+                                    inputError,
+                                    editError
                                 )
                             )
                         ),
@@ -219,6 +232,8 @@ var TodoItem = function (_React$Component3) {
                         {
                             className: 'todo-icon d-flex'
                         },
+                        '   ',
+                        React.createElement('span', null),
                         React.createElement(
                             'span',
                             {
@@ -357,8 +372,16 @@ var App = function (_React$Component5) {
         _this5.handleSubmit = function (e) {
             e.preventDefault();
 
+            // CHECK IF INPUT IS CLEAR
             if (_this5.state.item === '') {
-                alert('Input cannot be clear!');
+                _this5.setState({
+                    inputError: 'INPUT CANNOT BE CLEAR'
+                });
+                setTimeout(function () {
+                    _this5.setState({
+                        inputError: ''
+                    });
+                }, 3000);
                 return;
             }
 
@@ -368,6 +391,8 @@ var App = function (_React$Component5) {
             };
             // console.log(newItem);
             // console.log(this.state.editItem);
+
+
             var updatedItems = [].concat(_toConsumableArray(_this5.state.items), [newItem]);
 
             _this5.setState({
@@ -380,7 +405,7 @@ var App = function (_React$Component5) {
 
         _this5.clearList = function () {
             _this5.setState({
-                items: ''
+                items: []
             });
         };
 
@@ -402,7 +427,18 @@ var App = function (_React$Component5) {
             var selectedItem = _this5.state.items.find(function (item) {
                 return item.id === id;
             });
-            // console.log(selectedItem)
+
+            if (_this5.state.editItem) {
+                _this5.setState({
+                    editError: 'ITEM IS BEING EDITED ALREDY'
+                });
+                setTimeout(function () {
+                    _this5.setState({
+                        editError: ''
+                    });
+                }, 3000);
+                return;
+            }
 
             _this5.setState({
                 items: filteredItems,
@@ -417,10 +453,14 @@ var App = function (_React$Component5) {
             id: _this5.uuid(),
             item: '',
             searchItem: '',
-            editItem: false
+            editItem: false,
+            inputError: '',
+            editError: ''
         };
         return _this5;
     }
+    // UNIQUE ID GENERATOR
+
 
     _createClass(App, [{
         key: 'uuid',
@@ -434,6 +474,15 @@ var App = function (_React$Component5) {
         // DELETE SEARCH INPUT
 
         // DELETE INPUT INPUT
+
+        // SUBMIT FORM
+
+        // CLEAR ALL
+
+
+        // ICON
+
+        // ICON
 
     }, {
         key: 'render',
@@ -463,7 +512,9 @@ var App = function (_React$Component5) {
                             handleChange: this.handleChange,
                             handleSubmit: this.handleSubmit,
                             editItem: this.state.editItem,
-                            deleteInput: this.deleteInput
+                            deleteInput: this.deleteInput,
+                            inputError: this.state.inputError,
+                            editError: this.state.editError
                         }),
                         React.createElement(TodoList, {
                             items: filteredSearch,

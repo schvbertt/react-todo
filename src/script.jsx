@@ -6,15 +6,14 @@ class TodoInput extends React.Component {
             handleChange,
             handleSubmit,
             editItem,
-            deleteInput} = this.props;
+            deleteInput,
+            inputError,
+            editError} = this.props;
 
-            
+    
         return (
             // INPUT
             <div className='card card-body my-3'>
-                <h3 className='text-capitalize text-center'>
-                    input
-                </h3>
                 <form onSubmit={handleSubmit}>
                     {/* INPUT ICON */}
                     <div className='input-group mt-2'>
@@ -41,6 +40,19 @@ class TodoInput extends React.Component {
                             </div>
                         </div>
                     </div>
+
+                    {/* ERRORS */}
+                    <div
+                    className='container d-flex'
+                    style={{height: '13px'}}>
+                        <div className='ml-auto mt-1'>
+                            <span className='badge badge-pill badge-warning d-flex'>
+                                {inputError}
+                                {editError}
+                            </span>
+                        </div>
+                    </div>
+
                     <button type='submit'
                     className={editItem
                         ? 'btn btn-block btn-success mt-3'
@@ -135,6 +147,7 @@ class TodoItem extends React.Component {
             handleDelete,
             handleEdit} = this.props;
 
+            
         return (
             <li className="list-group-item text-capitalize 
              my-2">
@@ -148,7 +161,9 @@ class TodoItem extends React.Component {
                     {/* ICONS */}
                     <div 
                 className='todo-icon d-flex'
-                >
+                >   <span>
+                        {/* {isEdited} */}
+                    </span>
                     <span
                     className="text-success mx-2"
                     style={{cursor: 'pointer'}}
@@ -225,9 +240,12 @@ class App extends React.Component {
             id: this.uuid(),
             item: '',
             searchItem: '',
-            editItem: false
+            editItem: false,
+            inputError: '',
+            editError: ''
         }
     }
+// UNIQUE ID GENERATOR
     uuid() {
         return 1 + Math.random();
     }
@@ -255,14 +273,25 @@ class App extends React.Component {
             item: ''
         })
     }
-
+// SUBMIT FORM
     handleSubmit = e => {
         e.preventDefault();
 
-        if(this.state.item === '') {
-            alert('Input cannot be clear!')
-            return;
-        }
+            // CHECK IF INPUT IS CLEAR
+                if (this.state.item === '') {
+                    this.setState({
+                        inputError: 'INPUT CANNOT BE CLEAR'
+                    })
+                    setTimeout(
+                        () => {
+                            this.setState({
+                                inputError: ''
+                            })
+                        },
+                        3000
+                    ) 
+                    return;
+            }
 
 
         const newItem = {
@@ -271,23 +300,26 @@ class App extends React.Component {
         };
         // console.log(newItem);
         // console.log(this.state.editItem);
+
+        
         const updatedItems = [...this.state.items, newItem];
 
         this.setState({
             items: updatedItems,
             item: '',
             id: this.uuid(),
-            editItem: false,
+            editItem: false
         })
 
     }
-
+// CLEAR ALL
     clearList = () => {
         this.setState({
-            items: ''
+            items: []
         })
     }
 
+// ICON
     handleDelete = id => {
         const filteredItems = this.state.items.filter
         (item => item.id !== id)
@@ -296,13 +328,27 @@ class App extends React.Component {
             items: filteredItems
         })
     }
-
+// ICON
     handleEdit = id => {
         const filteredItems = this.state.items.filter(item => 
             item.id !== id)
 
         const selectedItem = this.state.items.find(item => item.id === id)
-        // console.log(selectedItem)
+        
+        if (this.state.editItem) {
+            this.setState({
+                editError: 'ITEM IS BEING EDITED ALREDY'
+            })
+            setTimeout(
+                () => {
+                    this.setState({
+                        editError: ''
+                    })
+                },
+                3000
+            ) 
+            return;
+    }
 
         this.setState({
             items: filteredItems,
@@ -310,6 +356,7 @@ class App extends React.Component {
             editItem: true,
             id: id
         })
+
     }
 
     render() {
@@ -338,6 +385,8 @@ class App extends React.Component {
                         handleSubmit={this.handleSubmit}
                         editItem={this.state.editItem}
                         deleteInput={this.deleteInput}
+                        inputError={this.state.inputError}
+                        editError={this.state.editError}
                         />
                         <TodoList
                         items={filteredSearch}
