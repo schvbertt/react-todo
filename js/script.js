@@ -166,6 +166,7 @@ var TodoList = function (_React$Component2) {
                             title: item.title,
                             date: item.date,
                             isEdited: item.isEdited,
+                            editedAt: item.editedAt,
                             handleDelete: function handleDelete() {
                                 return _handleDelete(item.id);
                             },
@@ -210,7 +211,8 @@ var TodoItem = function (_React$Component3) {
                 handleDelete = _props3.handleDelete,
                 handleEdit = _props3.handleEdit,
                 date = _props3.date,
-                isEdited = _props3.isEdited;
+                isEdited = _props3.isEdited,
+                editedAt = _props3.editedAt;
 
 
             return React.createElement(
@@ -235,7 +237,9 @@ var TodoItem = function (_React$Component3) {
                             React.createElement(
                                 'small',
                                 null,
-                                isEdited ? '| edited' : ''
+                                isEdited ? '| edited at' : '',
+                                ' ',
+                                editedAt
                             )
                         )
                     ),
@@ -396,26 +400,43 @@ var App = function (_React$Component5) {
                 return;
             }
 
-            var newItem = {
-                id: _this5.state.id,
-                title: _this5.state.item,
-                date: _this5.state.date,
-                isEdited: _this5.state.isEdited
-            };
-            // console.log(newItem);
-            // console.log(this.state.editItem);
+            // PREVENT REPEATING OF ITEMS
+            if (_this5.state.items.findIndex(function (o) {
+                return o.title === _this5.state.item;
+            }) !== -1 && _this5.state.editItem === false) {
+                console.log('Item exist');
+                return;
+            }
 
+            // CHECK IF ITEM IS EDITED + EDIT POSITION
+            if (_this5.state.editItem) {
 
-            var updatedItems = [].concat(_toConsumableArray(_this5.state.items), [newItem]);
+                var tempItems = _this5.state.items.map(function (item) {
+                    return item.id === _this5.state.id ? Object.assign({}, item, { title: _this5.state.item, isEdited: true, editedAt: _this5.date() }) : item;
+                });
 
-            _this5.setState({
-                items: updatedItems,
-                item: '',
-                id: _this5.uuid(),
-                editItem: false,
-                date: _this5.date(),
-                isEdited: false
-            });
+                _this5.setState({
+                    items: tempItems,
+                    editItem: false,
+                    item: ''
+                });
+            } else {
+                var newItem = {
+                    id: _this5.state.id,
+                    title: _this5.state.item,
+                    date: _this5.state.date
+                };
+
+                var updatedItems = [].concat(_toConsumableArray(_this5.state.items), [newItem]);
+
+                _this5.setState({
+                    items: updatedItems,
+                    item: '',
+                    id: _this5.uuid(),
+                    editItem: false,
+                    date: _this5.date()
+                });
+            }
         };
 
         _this5.clearList = function () {
@@ -435,17 +456,9 @@ var App = function (_React$Component5) {
         };
 
         _this5.handleEdit = function (id) {
-            var filteredItems = _this5.state.items.filter(function (item) {
-                return item.id !== id;
-            });
-
-            var selectedItem = _this5.state.items.find(function (item) {
+            var item = _this5.state.items.find(function (item) {
                 return item.id === id;
             });
-
-            // SCROLL TO TOP FOR EACH EDIT
-            window.scrollTo(0, 0);
-
             if (_this5.state.editItem) {
                 _this5.setState({
                     editError: 'ITEM IS BEING EDITED ALREDY'
@@ -459,11 +472,10 @@ var App = function (_React$Component5) {
             }
 
             _this5.setState({
-                items: filteredItems,
-                item: selectedItem.title,
+                item: item.title,
                 editItem: true,
-                id: id,
-                isEdited: true
+                isEdited: true,
+                id: item.id
             });
         };
 

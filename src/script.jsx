@@ -115,6 +115,7 @@ class TodoList extends React.Component {
                         title={item.title}
                         date={item.date}
                         isEdited={item.isEdited}
+                        editedAt={item.editedAt}
                         handleDelete={() => handleDelete(item.id)}
                         handleEdit={() => handleEdit(item.id)}
                         />
@@ -142,7 +143,8 @@ class TodoItem extends React.Component {
             handleDelete,
             handleEdit,
             date,
-            isEdited} = this.props;
+            isEdited,
+            editedAt} = this.props;
 
         return (
             <li className="list-group-item my-2">
@@ -155,7 +157,7 @@ class TodoItem extends React.Component {
                             {date}
                         </div>
                         <div className='ml-2'>
-                            <small>{isEdited ? '| edited' : ''}</small>
+                            <small>{isEdited ? '| edited at' : ''} {editedAt}</small>
                         </div>
                     </div>
                     {/* ICONS */}
@@ -298,16 +300,32 @@ class App extends React.Component {
                     return;
             }
 
+            // PREVENT REPEATING OF ITEMS
+            if (this.state.items.findIndex(o => o.title === this.state.item) !== -1 && this.state.editItem === false) {
+                console.log('Item exist')
+                return;
+            }
+            
+        // CHECK IF ITEM IS EDITED + EDIT POSITION
+            if (this.state.editItem) {
 
-        const newItem = {
+            let tempItems = this.state.items.map(item => {
+                return item.id === this.state.id
+                ? {...item, title: this.state.item, isEdited: true, editedAt: this.date()}
+                : item
+            })
+
+            this.setState({
+                items: tempItems,
+                editItem: false,
+                item: ''
+            })
+        } else {
+            const newItem = {
             id: this.state.id,
             title: this.state.item,
-            date: this.state.date,
-            isEdited: this.state.isEdited
+            date: this.state.date
         };
-        // console.log(newItem);
-        // console.log(this.state.editItem);
-
         
         const updatedItems = [...this.state.items, newItem];
 
@@ -317,9 +335,8 @@ class App extends React.Component {
             id: this.uuid(),
             editItem: false,
             date: this.date(),
-            isEdited: false
         })
-
+        }
     }
 // CLEAR ALL
     clearList = () => {
@@ -339,15 +356,9 @@ class App extends React.Component {
     }
 // ICON
     handleEdit = id => {
-        const filteredItems = this.state.items.filter(item => 
-            item.id !== id)
-
-        const selectedItem = this.state.items.find(item => item.id === id)
-
-        // SCROLL TO TOP FOR EACH EDIT
-        window.scrollTo(0, 0);
-        
-        if (this.state.editItem) {
+        let item = this.state.items.find(
+            (item) => item.id === id)
+                if (this.state.editItem) {
             this.setState({
                 editError: 'ITEM IS BEING EDITED ALREDY',
             })
@@ -362,14 +373,12 @@ class App extends React.Component {
             return;
     }
 
-        this.setState({
-            items: filteredItems,
-            item: selectedItem.title,
-            editItem: true,
-            id: id,
-            isEdited: true
-        })
-
+    this.setState({
+        item: item.title,
+        editItem: true,
+        isEdited: true,
+        id: item.id
+    })
     }
 
     render() {
