@@ -27,8 +27,7 @@ var TodoInput = function (_React$Component) {
                 handleSubmit = _props.handleSubmit,
                 editItem = _props.editItem,
                 deleteInput = _props.deleteInput,
-                inputError = _props.inputError,
-                editError = _props.editError;
+                error = _props.error;
 
 
             return (
@@ -73,19 +72,15 @@ var TodoInput = function (_React$Component) {
                         ),
                         React.createElement(
                             'div',
-                            {
-                                className: 'container d-flex',
-                                style: { height: '13px' } },
-                            React.createElement(
+                            { className: 'mt-2', style: { height: '30px' } },
+                            error.show ? React.createElement(
                                 'div',
-                                { className: 'ml-auto mt-1' },
-                                React.createElement(
-                                    'span',
-                                    { className: 'badge badge-pill badge-warning d-flex' },
-                                    inputError,
-                                    editError
-                                )
-                            )
+                                {
+                                    className: 'alert alert-' + error.type + ' text-center',
+                                    style: { padding: '5px' },
+                                    role: 'alert' },
+                                error.text
+                            ) : ''
                         ),
                         React.createElement(
                             'button',
@@ -136,12 +131,24 @@ var TodoList = function (_React$Component2) {
                 search = '';
             }
 
-            if (search.length === 0 && items.length === 0) {
-                myRender = "You're clear bro! :)";
-            } else {
-                myRender = '';
-            }
+            // if (search.length === 0 && items.length === 0) {
+            //     myRender = "You're clear bro! :)"
+            // } else {
+            //     myRender = ''
+            // }
 
+            // SHOW BUTTON OR NOT
+            var button = void 0;
+            if (items.length > 0) {
+                button = React.createElement(
+                    'button',
+                    { type: 'button',
+                        className: 'btn btn-danger btn-block mt-5',
+                        onClick: clearList
+                    },
+                    'Clear list'
+                );
+            }
             return React.createElement(
                 'div',
                 { className: 'mr-5' },
@@ -175,14 +182,7 @@ var TodoList = function (_React$Component2) {
                             }
                         });
                     }),
-                    React.createElement(
-                        'button',
-                        { type: 'button',
-                            className: 'btn btn-danger btn-block mt-5',
-                            onClick: clearList
-                        },
-                        'Clear list'
-                    )
+                    button
                 )
             );
         }
@@ -371,12 +371,22 @@ var App = function (_React$Component5) {
         };
 
         _this5.deleteSearch = function () {
+            // ALERT
+            if (_this5.state.searchItem !== '') {
+                _this5.handleAlert({ type: 'danger', text: "Search input cleared" });
+            }
+
             _this5.setState({
                 searchItem: ''
             });
         };
 
         _this5.deleteInput = function () {
+            // ALERT
+            if (_this5.state.item !== '') {
+                _this5.handleAlert({ type: 'danger', text: "Input cleared" });
+            }
+
             _this5.setState({
                 item: '',
                 editItem: false,
@@ -389,14 +399,8 @@ var App = function (_React$Component5) {
 
             // CHECK IF INPUT IS CLEAR
             if (_this5.state.item === '') {
-                _this5.setState({
-                    inputError: "INPUT CAN'T BE CLEAR"
-                });
-                setTimeout(function () {
-                    _this5.setState({
-                        inputError: ''
-                    });
-                }, 3000);
+                // ALERT
+                _this5.handleAlert({ type: 'danger', text: "Input can't be clear" });
                 return;
             }
 
@@ -404,7 +408,8 @@ var App = function (_React$Component5) {
             if (_this5.state.items.findIndex(function (o) {
                 return o.title === _this5.state.item;
             }) !== -1 && _this5.state.editItem === false) {
-                console.log('Item exist');
+                // ALERT
+                _this5.handleAlert({ type: 'danger', text: 'Item is already on the list' });
                 return;
             }
 
@@ -414,6 +419,8 @@ var App = function (_React$Component5) {
                 var tempItems = _this5.state.items.map(function (item) {
                     return item.id === _this5.state.id ? Object.assign({}, item, { title: _this5.state.item, isEdited: true, editedAt: _this5.date() }) : item;
                 });
+                // ALERT
+                _this5.handleAlert({ type: 'success', text: 'Item edited' });
 
                 _this5.setState({
                     items: tempItems,
@@ -429,6 +436,9 @@ var App = function (_React$Component5) {
 
                 var updatedItems = [].concat(_toConsumableArray(_this5.state.items), [newItem]);
 
+                // ALERT
+                _this5.handleAlert({ type: 'success', text: 'Item added' });
+
                 _this5.setState({
                     items: updatedItems,
                     item: '',
@@ -440,12 +450,18 @@ var App = function (_React$Component5) {
         };
 
         _this5.clearList = function () {
+            // ALERT
+            _this5.handleAlert({ type: 'danger', text: 'List cleared' });
+
             _this5.setState({
                 items: []
             });
         };
 
         _this5.handleDelete = function (id) {
+            // ALERT
+            _this5.handleAlert({ type: 'danger', text: 'Item deleted' });
+
             var filteredItems = _this5.state.items.filter(function (item) {
                 return item.id !== id;
             });
@@ -459,15 +475,16 @@ var App = function (_React$Component5) {
             var item = _this5.state.items.find(function (item) {
                 return item.id === id;
             });
+
+            // SMOOTH SCROLLING WHEN EDITING
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+
             if (_this5.state.editItem) {
-                _this5.setState({
-                    editError: 'ITEM IS BEING EDITED ALREDY'
-                });
-                setTimeout(function () {
-                    _this5.setState({
-                        editError: ''
-                    });
-                }, 3000);
+                // ALERT
+                _this5.handleAlert({ type: 'danger', text: 'Some item is already edited' });
                 return;
             }
 
@@ -479,14 +496,33 @@ var App = function (_React$Component5) {
             });
         };
 
+        _this5.handleAlert = function (_ref) {
+            var type = _ref.type,
+                text = _ref.text;
+
+            _this5.setState({
+                error: Object.assign({}, _this5.state.error, {
+                    show: true,
+                    type: type,
+                    text: text
+                })
+            });
+            setTimeout(function () {
+                _this5.setState({
+                    error: Object.assign({}, _this5.state.error, {
+                        show: false
+                    })
+                });
+            }, 4000);
+        };
+
         _this5.state = {
             items: [],
             id: _this5.uuid(),
             item: '',
             searchItem: '',
             editItem: false,
-            inputError: '',
-            editError: '',
+            error: { show: false, type: '', text: '' }, //!!!!!!
             date: _this5.date(),
             isEdited: false
         };
@@ -524,6 +560,9 @@ var App = function (_React$Component5) {
 
         // ICON
 
+
+        // HANDLE ALERT
+
     }, {
         key: 'render',
         value: function render() {
@@ -553,8 +592,7 @@ var App = function (_React$Component5) {
                             handleSubmit: this.handleSubmit,
                             editItem: this.state.editItem,
                             deleteInput: this.deleteInput,
-                            inputError: this.state.inputError,
-                            editError: this.state.editError
+                            error: this.state.error
                         }),
                         React.createElement(TodoList, {
                             items: filteredSearch,

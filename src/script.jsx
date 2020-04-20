@@ -7,8 +7,7 @@ class TodoInput extends React.Component {
             handleSubmit,
             editItem,
             deleteInput,
-            inputError,
-            editError} = this.props;
+            error} = this.props;
 
     
         return (
@@ -42,17 +41,19 @@ class TodoInput extends React.Component {
                     </div>
 
                     {/* ERRORS */}
-                    <div
-                    className='container d-flex'
-                    style={{height: '13px'}}>
-                        <div className='ml-auto mt-1'>
-                            <span className='badge badge-pill badge-warning d-flex'>
-                                {inputError}
-                                {editError}
-                            </span>
-                        </div>
+                    <div className='mt-2' style={{height: '30px'}}>
+                        {error.show
+                        ?    <div 
+                        className={`alert alert-${error.type} text-center`}
+                        style={{padding: '5px'}}
+                        role="alert">
+                            {error.text}
+                            </div>
+                        : ''
+                        }
                     </div>
-
+                    
+                    {/* BUTTON TYPE */}
                     <button type='submit'
                     className={editItem
                         ? 'btn btn-block btn-success mt-3'
@@ -90,13 +91,24 @@ class TodoList extends React.Component {
                 search = ''
             }
 
-            if (search.length === 0 && items.length === 0) {
-                myRender = "You're clear bro! :)"
-            } else {
-                myRender = ''
-            }
+            // if (search.length === 0 && items.length === 0) {
+            //     myRender = "You're clear bro! :)"
+            // } else {
+            //     myRender = ''
+            // }
 
-        
+            // SHOW BUTTON OR NOT
+            let button;
+            if (items.length > 0) {
+                button = (
+                <button type='button'
+                className='btn btn-danger btn-block mt-5'
+                onClick={clearList}
+                >
+                    Clear list
+                </button> 
+                )
+            }
         return (
             <div className='mr-5'>
             <ul className="list group my-5">
@@ -121,12 +133,7 @@ class TodoList extends React.Component {
                         />
                     )
                 })}
-                <button type='button'
-                className='btn btn-danger btn-block mt-5'
-                onClick={clearList}
-                >
-                    Clear list
-                </button>
+                {button}
             </ul>
             </div>
         )
@@ -240,8 +247,7 @@ class App extends React.Component {
             item: '',
             searchItem: '',
             editItem: false,
-            inputError: '',
-            editError: '',
+            error: {show: false, type: '', text: ''}, //!!!!!!
             date: this.date(),
             isEdited: false
         }
@@ -268,12 +274,22 @@ class App extends React.Component {
     }
 // DELETE SEARCH INPUT
     deleteSearch = () => {
+        // ALERT
+        if (this.state.searchItem !== '') {
+            this.handleAlert({type: 'danger', text: "Search input cleared"})
+        }
+
         this.setState({
             searchItem: ''
         })
     }
 // DELETE INPUT INPUT
     deleteInput = () => {
+        // ALERT
+        if (this.state.item !== '') {
+            this.handleAlert({type: 'danger', text: "Input cleared"})
+        }
+
         this.setState({
             item: '',
             editItem: false,
@@ -285,24 +301,17 @@ class App extends React.Component {
         e.preventDefault();
 
             // CHECK IF INPUT IS CLEAR
-                if (this.state.item === '') {
-                    this.setState({
-                        inputError: "INPUT CAN'T BE CLEAR"
-                    })
-                    setTimeout(
-                        () => {
-                            this.setState({
-                                inputError: ''
-                            })
-                        },
-                        3000
-                    ) 
-                    return;
+            if (this.state.item === '') {
+                // ALERT
+                this.handleAlert({type: 'danger', text: "Input can't be clear"})
+                return;
             }
+
 
             // PREVENT REPEATING OF ITEMS
             if (this.state.items.findIndex(o => o.title === this.state.item) !== -1 && this.state.editItem === false) {
-                console.log('Item exist')
+                // ALERT
+                this.handleAlert({type: 'danger', text: 'Item is already on the list'})
                 return;
             }
             
@@ -314,6 +323,8 @@ class App extends React.Component {
                 ? {...item, title: this.state.item, isEdited: true, editedAt: this.date()}
                 : item
             })
+            // ALERT
+            this.handleAlert({type: 'success', text: 'Item edited'})
 
             this.setState({
                 items: tempItems,
@@ -329,6 +340,9 @@ class App extends React.Component {
         
         const updatedItems = [...this.state.items, newItem];
 
+        // ALERT
+        this.handleAlert({type: 'success', text: 'Item added'})
+
         this.setState({
             items: updatedItems,
             item: '',
@@ -340,6 +354,9 @@ class App extends React.Component {
     }
 // CLEAR ALL
     clearList = () => {
+        // ALERT
+        this.handleAlert({type: 'danger', text: 'List cleared'})
+
         this.setState({
             items: []
         })
@@ -347,6 +364,9 @@ class App extends React.Component {
 
 // ICON
     handleDelete = id => {
+        // ALERT
+        this.handleAlert({type: 'danger', text: 'Item deleted'})
+
         const filteredItems = this.state.items.filter
         (item => item.id !== id)
 
@@ -358,18 +378,16 @@ class App extends React.Component {
     handleEdit = id => {
         let item = this.state.items.find(
             (item) => item.id === id)
-                if (this.state.editItem) {
-            this.setState({
-                editError: 'ITEM IS BEING EDITED ALREDY',
+
+            // SMOOTH SCROLLING WHEN EDITING
+            window.scrollTo({ 
+                top: 0, 
+                behavior: 'smooth' 
             })
-            setTimeout(
-                () => {
-                    this.setState({
-                        editError: ''
-                    })
-                },
-                3000
-            ) 
+
+                if (this.state.editItem) {
+                    // ALERT
+                    this.handleAlert({type: 'danger', text: 'Some item is already edited'})
             return;
     }
 
@@ -381,6 +399,25 @@ class App extends React.Component {
     })
     }
 
+// HANDLE ALERT
+handleAlert = ({type, text}) => {
+    this.setState({
+        error: 
+        {...this.state.error,
+            show: true,
+            type: type,
+            text: text
+        }
+    })
+    setTimeout(() => {
+        this.setState({
+            error: 
+            {...this.state.error,
+                show: false
+            }
+        })
+    }, 4000)
+  }
     render() {
 
         const filteredSearch = this.state.items.filter(
@@ -395,7 +432,6 @@ class App extends React.Component {
             <div className="container">
                 <div className="row">
                     <div className="col-10 mx-auto col-md-8 mt-4">
-                        
                         <TodoSearch 
                         searchItem={this.state.searchItem}
                         handleSearch={this.handleSearch}
@@ -407,8 +443,7 @@ class App extends React.Component {
                         handleSubmit={this.handleSubmit}
                         editItem={this.state.editItem}
                         deleteInput={this.deleteInput}
-                        inputError={this.state.inputError}
-                        editError={this.state.editError}
+                        error={this.state.error}
                         />
                         <TodoList
                         items={filteredSearch}
