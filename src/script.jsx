@@ -133,6 +133,7 @@ class TodoList extends React.Component {
                         />
                     )
                 })}
+                {/* BUTTON */}
                 {button}
             </ul>
             </div>
@@ -248,7 +249,6 @@ class App extends React.Component {
             searchItem: '',
             editItem: false,
             error: {show: false, type: '', text: ''}, //!!!!!!
-            date: this.date(),
             isEdited: false
         }
     }
@@ -329,13 +329,14 @@ class App extends React.Component {
             this.setState({
                 items: tempItems,
                 editItem: false,
-                item: ''
+                item: '',
+                id: this.uuid()
             })
         } else {
             const newItem = {
             id: this.state.id,
             title: this.state.item,
-            date: this.state.date
+            date: this.date()
         };
         
         const updatedItems = [...this.state.items, newItem];
@@ -347,8 +348,7 @@ class App extends React.Component {
             items: updatedItems,
             item: '',
             id: this.uuid(),
-            editItem: false,
-            date: this.date(),
+            editItem: false
         })
         }
     }
@@ -394,8 +394,7 @@ class App extends React.Component {
     this.setState({
         item: item.title,
         editItem: true,
-        isEdited: true,
-        id: item.id
+        id: id
     })
     }
 
@@ -413,7 +412,9 @@ handleAlert = ({type, text}) => {
         this.setState({
             error: 
             {...this.state.error,
-                show: false
+                show: false,
+                type: type,
+                text: text
             }
         })
     }, 4000)

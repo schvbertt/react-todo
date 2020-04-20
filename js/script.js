@@ -425,13 +425,14 @@ var App = function (_React$Component5) {
                 _this5.setState({
                     items: tempItems,
                     editItem: false,
-                    item: ''
+                    item: '',
+                    id: _this5.uuid()
                 });
             } else {
                 var newItem = {
                     id: _this5.state.id,
                     title: _this5.state.item,
-                    date: _this5.state.date
+                    date: _this5.date()
                 };
 
                 var updatedItems = [].concat(_toConsumableArray(_this5.state.items), [newItem]);
@@ -443,8 +444,7 @@ var App = function (_React$Component5) {
                     items: updatedItems,
                     item: '',
                     id: _this5.uuid(),
-                    editItem: false,
-                    date: _this5.date()
+                    editItem: false
                 });
             }
         };
@@ -491,8 +491,7 @@ var App = function (_React$Component5) {
             _this5.setState({
                 item: item.title,
                 editItem: true,
-                isEdited: true,
-                id: item.id
+                id: id
             });
         };
 
@@ -510,7 +509,9 @@ var App = function (_React$Component5) {
             setTimeout(function () {
                 _this5.setState({
                     error: Object.assign({}, _this5.state.error, {
-                        show: false
+                        show: false,
+                        type: type,
+                        text: text
                     })
                 });
             }, 4000);
@@ -523,7 +524,6 @@ var App = function (_React$Component5) {
             searchItem: '',
             editItem: false,
             error: { show: false, type: '', text: '' }, //!!!!!!
-            date: _this5.date(),
             isEdited: false
         };
         return _this5;
