@@ -99,15 +99,24 @@ class TodoList extends React.Component {
 
             // SHOW BUTTON OR NOT
             let button;
-            if (items.length > 0) {
+            if (items.length > 0 && !!searchItem ) {
                 button = (
-                <button type='button'
-                className='btn btn-danger btn-block mt-5'
-                onClick={clearList}
-                >
-                    Clear list
-                </button> 
-                )
+                    <button type='button'
+                    className='btn btn-danger btn-block mt-5'
+                    onClick={clearList}
+                    >
+                        Clear search list
+                    </button> 
+                    )
+            } else if (items.length > 0) {
+                button = (
+                    <button type='button'
+                    className='btn btn-danger btn-block mt-5'
+                    onClick={clearList}
+                    >
+                        Clear list
+                    </button> 
+                    )
             }
         return (
             <div className='mr-5'>
@@ -309,7 +318,9 @@ class App extends React.Component {
 
 
             // PREVENT REPEATING OF ITEMS
-            if (this.state.items.findIndex(o => o.title === this.state.item) !== -1 && this.state.editItem === false) {
+            const itemExist = this.state.items.findIndex(o => o.title === this.state.item)
+
+            if (itemExist !== -1) {
                 // ALERT
                 this.handleAlert({type: 'danger', text: 'Item is already on the list'})
                 return;
@@ -357,8 +368,18 @@ class App extends React.Component {
         // ALERT
         this.handleAlert({type: 'danger', text: 'List cleared'})
 
+        const filteredArray = this.state.items.filter(
+            item => {
+                return item.title.toLowerCase().indexOf(
+                    this.state.searchItem.toLowerCase()) !== -1;
+                }
+            )
+
+        const difference = this.state.items.filter
+        (item => !filteredArray.includes(item))
+
         this.setState({
-            items: []
+            items: difference
         })
     }
 
@@ -400,6 +421,9 @@ class App extends React.Component {
 
 // HANDLE ALERT
 handleAlert = ({type, text}) => {
+        // CLEARING TIMEOUT FOR EACH ALERT CALL
+        clearTimeout(this.timer)
+
     this.setState({
         error: 
         {...this.state.error,
@@ -408,7 +432,7 @@ handleAlert = ({type, text}) => {
             text: text
         }
     })
-    setTimeout(() => {
+    this.timer = setTimeout(() => {
         this.setState({
             error: 
             {...this.state.error,
@@ -417,8 +441,10 @@ handleAlert = ({type, text}) => {
                 text: text
             }
         })
-    }, 4000)
+    }, 3000)
   }
+
+// END OF METHODS
     render() {
 
         const filteredSearch = this.state.items.filter(

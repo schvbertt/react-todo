@@ -139,7 +139,16 @@ var TodoList = function (_React$Component2) {
 
             // SHOW BUTTON OR NOT
             var button = void 0;
-            if (items.length > 0) {
+            if (items.length > 0 && !!searchItem) {
+                button = React.createElement(
+                    'button',
+                    { type: 'button',
+                        className: 'btn btn-danger btn-block mt-5',
+                        onClick: clearList
+                    },
+                    'Clear search list'
+                );
+            } else if (items.length > 0) {
                 button = React.createElement(
                     'button',
                     { type: 'button',
@@ -405,9 +414,11 @@ var App = function (_React$Component5) {
             }
 
             // PREVENT REPEATING OF ITEMS
-            if (_this5.state.items.findIndex(function (o) {
+            var itemExist = _this5.state.items.findIndex(function (o) {
                 return o.title === _this5.state.item;
-            }) !== -1 && _this5.state.editItem === false) {
+            });
+
+            if (itemExist !== -1) {
                 // ALERT
                 _this5.handleAlert({ type: 'danger', text: 'Item is already on the list' });
                 return;
@@ -453,8 +464,16 @@ var App = function (_React$Component5) {
             // ALERT
             _this5.handleAlert({ type: 'danger', text: 'List cleared' });
 
+            var filteredArray = _this5.state.items.filter(function (item) {
+                return item.title.toLowerCase().indexOf(_this5.state.searchItem.toLowerCase()) !== -1;
+            });
+
+            var difference = _this5.state.items.filter(function (item) {
+                return !filteredArray.includes(item);
+            });
+
             _this5.setState({
-                items: []
+                items: difference
             });
         };
 
@@ -499,6 +518,9 @@ var App = function (_React$Component5) {
             var type = _ref.type,
                 text = _ref.text;
 
+            // CLEARING TIMEOUT FOR EACH ALERT CALL
+            clearTimeout(_this5.timer);
+
             _this5.setState({
                 error: Object.assign({}, _this5.state.error, {
                     show: true,
@@ -506,7 +528,7 @@ var App = function (_React$Component5) {
                     text: text
                 })
             });
-            setTimeout(function () {
+            _this5.timer = setTimeout(function () {
                 _this5.setState({
                     error: Object.assign({}, _this5.state.error, {
                         show: false,
@@ -514,7 +536,7 @@ var App = function (_React$Component5) {
                         text: text
                     })
                 });
-            }, 4000);
+            }, 3000);
         };
 
         _this5.state = {
@@ -565,6 +587,9 @@ var App = function (_React$Component5) {
 
     }, {
         key: 'render',
+
+
+        // END OF METHODS
         value: function render() {
             var _this6 = this;
 
