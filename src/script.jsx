@@ -366,7 +366,11 @@ class App extends React.Component {
 // CLEAR ALL
     clearList = () => {
         // ALERT
-        this.handleAlert({type: 'danger', text: 'List cleared'})
+        if (!!this.state.searchItem) {
+            this.handleAlert({type: 'danger', text: 'Search list cleared'})
+        } else {
+            this.handleAlert({type: 'danger', text: 'List cleared'})
+        }
 
         const filteredArray = this.state.items.filter(
             item => {
@@ -379,7 +383,8 @@ class App extends React.Component {
         (item => !filteredArray.includes(item))
 
         this.setState({
-            items: difference
+            items: difference,
+            searchItem: ''
         })
     }
 

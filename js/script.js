@@ -462,7 +462,11 @@ var App = function (_React$Component5) {
 
         _this5.clearList = function () {
             // ALERT
-            _this5.handleAlert({ type: 'danger', text: 'List cleared' });
+            if (!!_this5.state.searchItem) {
+                _this5.handleAlert({ type: 'danger', text: 'Search list cleared' });
+            } else {
+                _this5.handleAlert({ type: 'danger', text: 'List cleared' });
+            }
 
             var filteredArray = _this5.state.items.filter(function (item) {
                 return item.title.toLowerCase().indexOf(_this5.state.searchItem.toLowerCase()) !== -1;
@@ -473,7 +477,8 @@ var App = function (_React$Component5) {
             });
 
             _this5.setState({
-                items: difference
+                items: difference,
+                searchItem: ''
             });
         };
 
