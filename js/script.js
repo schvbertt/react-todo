@@ -418,7 +418,7 @@ var App = function (_React$Component5) {
                 return o.title === _this5.state.item;
             });
 
-            if (itemExist !== -1) {
+            if (itemExist !== -1 && _this5.state.editItem === false) {
                 // ALERT
                 _this5.handleAlert({ type: 'danger', text: 'Item is already on the list' });
                 return;
@@ -426,7 +426,6 @@ var App = function (_React$Component5) {
 
             // CHECK IF ITEM IS EDITED + EDIT POSITION
             if (_this5.state.editItem) {
-
                 var tempItems = _this5.state.items.map(function (item) {
                     return item.id === _this5.state.id ? Object.assign({}, item, { title: _this5.state.item, isEdited: true, editedAt: _this5.date() }) : item;
                 });

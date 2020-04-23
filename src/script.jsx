@@ -320,7 +320,7 @@ class App extends React.Component {
             // PREVENT REPEATING OF ITEMS
             const itemExist = this.state.items.findIndex(o => o.title === this.state.item)
 
-            if (itemExist !== -1) {
+            if (itemExist !== -1 && this.state.editItem === false) {
                 // ALERT
                 this.handleAlert({type: 'danger', text: 'Item is already on the list'})
                 return;
@@ -328,7 +328,6 @@ class App extends React.Component {
             
         // CHECK IF ITEM IS EDITED + EDIT POSITION
             if (this.state.editItem) {
-
             let tempItems = this.state.items.map(item => {
                 return item.id === this.state.id
                 ? {...item, title: this.state.item, isEdited: true, editedAt: this.date()}
